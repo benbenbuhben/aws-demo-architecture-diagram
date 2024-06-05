@@ -10,35 +10,47 @@ from diagrams.k8s.network import Ingress
 from diagrams.onprem.client import Users
 from diagrams.onprem.vcs import Github
 
-with Diagram("Prototype Architecture", show=False, direction="LR"):
+graph_attr = {
+    "fontsize": "24"
+}
+
+node_attr = {
+    "fontsize": "16"
+}
+
+cluster_attr = {
+    "fontsize": "20"
+}
+
+with Diagram("Prototype Architecture", show=False, direction="LR", graph_attr=graph_attr, node_attr=node_attr):
     user = Users("User")
     developer = Users("Developer")
 
-    with Cluster("AWS Cloud"):
+    with Cluster("AWS Cloud", graph_attr=cluster_attr):
         igw = InternetGateway("Internet Gateway")
 
-        with Cluster("VPC"):
+        with Cluster("VPC", graph_attr=cluster_attr):
             vpc = VPC("Main VPC")
 
-            with Cluster("Public Subnet"):
+            with Cluster("Public Subnet", graph_attr=cluster_attr):
                 public_subnet = PublicSubnet("Public Subnet")
                 lb = ELB("Load Balancer")
                 public_subnet - lb
 
-            with Cluster("Private Subnet"):
+            with Cluster("Private Subnet", graph_attr=cluster_attr):
                 private_subnet = PrivateSubnet("Private Subnet")
 
-                with Cluster("EKS Cluster"):
+                with Cluster("EKS Cluster", graph_attr=cluster_attr):
                     eks = ElasticKubernetesService("EKS")
                     ingress = Ingress("Ingress Controller")
 
-                    with Cluster("Demo App 1"):
+                    with Cluster("Demo App 1", graph_attr=cluster_attr):
                         backend1 = Pod("Node.js Server")
 
-                    with Cluster("Demo App 2"):
+                    with Cluster("Demo App 2", graph_attr=cluster_attr):
                         backend2 = Pod("Node.js Server")
 
-                with Cluster("RDS Instance"):
+                with Cluster("RDS Instance", graph_attr=cluster_attr):
                     db_primary = RDS("Primary DB")
 
                 lb >> ingress >> [backend1, backend2]
@@ -48,7 +60,7 @@ with Diagram("Prototype Architecture", show=False, direction="LR"):
         user >> lb
         vpc - igw
 
-        with Cluster("CI/CD Pipeline"):
+        with Cluster("CI/CD Pipeline", graph_attr=cluster_attr):
             code_pipeline_1 = Codepipeline("CodePipeline App 1")
             code_build_1 = Codebuild("CodeBuild App 1")
             code_pipeline_2 = Codepipeline("CodePipeline App 2")
